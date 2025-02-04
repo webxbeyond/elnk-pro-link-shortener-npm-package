@@ -1,6 +1,5 @@
 export type ElnkOptions = {
   apiKey: string;
-  apiUrl: string;
   longUrl?: string;
   shortUrl?: string;
   senderId?: string;

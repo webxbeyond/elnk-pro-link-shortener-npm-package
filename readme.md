@@ -5,7 +5,7 @@
 ## Installation
 
 ```sh
-npm install elnk-pro-shortlink
+npm install elnk
 ```
 
 ## Usage
