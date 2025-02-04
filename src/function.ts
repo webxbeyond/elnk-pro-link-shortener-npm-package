@@ -87,7 +87,7 @@ export async function createLinkIfNotExist({
     }
 
     const fullData = await fullDetailsResponse.json();
-    return { success: true, message: "Link created successfully", data: fullData };
+    return { success: true, message: "Link created successfully", data: fullData.data };
   } catch (error: any) {
     console.error("Error creating shortlink:", error.message);
     return { success: false, error: error.message };
