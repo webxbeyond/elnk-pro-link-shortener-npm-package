@@ -1,128 +1,66 @@
-# SMS Kit - A Simple Bulk SMS Sender
+# elnk-pro-shortlink
 
-A simple and easy-to-use SMS sender package for Bangladesh. The package allows you to send SMS messages using an API and can automatically grab API credentials from environment variables.
+`elnk-pro-shortlink` is a simple, dependency-free TypeScript package for interacting with the [elnk.pro](https://elnk.pro/) API to check for existing shortlinks and create new ones if they do not exist.
 
 ## Installation
 
 ```sh
-npm install @anisafifi/sms-kit
-```
-
-## Importing the Module
-
-```ts
-import { sendSms } from "@anisafifi/sms-kit";
+npm install elnk-pro-shortlink
 ```
 
 ## Usage
 
-You can use the package to send SMS messages by calling the `sendSms` function. This function accepts the following parameters:
+```typescript
+import { createLinkIfNotExist } from "elnk-pro-shortlink";
 
-### **`sendSms` function**
+const apiKey = "your_api_key";
+const longUrl = "https://example.com";
+const shortUrl = "custom-alias"; // Optional
+const domainId = 123; // Optional
+
+async function generateShortlink() {
+  const response = await createLinkIfNotExist({ longUrl, shortUrl, apiKey, domainId });
+  console.log(response);
+}
+
+generateShortlink();
+```
+
+## API
+
+### `createLinkIfNotExist(options: ElnkOptions): Promise<ElnkResponse>`
+
+#### Parameters:
+
+- `longUrl` (**string**, required): The original URL to be shortened.
+- `shortUrl` (**string**, optional): A custom alias for the shortlink.
+- `apiKey` (**string**, required): Your API key for authentication.
+- `domainId` (**number**, optional): The domain ID to use for shortening.
+
+#### Response:
+
+Returns a `Promise<ElnkResponse>` with the following structure:
 
 ```typescript
-sendSms({
-  recipientNumbers: string[],  // Array of recipient phone numbers (in international format, e.g., '+8801712345678')
-  message: string,             // The message to be sent
-  apiKey?: string,             // Your API key (optional, will use environment variable if not provided)
-  apiUrl?: string,             // The API URL (optional, will use environment variable if not provided)
-  senderId?: string            // The sender ID (optional, will use environment variable if not provided)
-});
-```
-
-### Example:
-
-```typescript
-import { sendSms } from "@anisafifi/sms-kit";
-
-// Send an SMS message
-sendSms({
-  recipientNumbers: ['+8801712345678'],
-  message: 'Hello from SMS Kit!'
-}).then(response => {
-  console.log('SMS Response:', response);
-}).catch(error => {
-  console.error('Error:', error);
-});
-```
-
-## Environment Variables
-
-The following environment variables are supported and will be automatically used if not passed explicitly to the `sendSms` function:
-
-- `SMS_API_KEY`: The API key for your SMS provider.
-- `SMS_API_URL`: The API URL for the SMS provider's endpoint.
-- `SMS_API_SENDER_ID`: The sender ID you wish to use for sending the SMS.
-
-You can define these variables in your `.env` file or directly in your environment.
-
-### Example `.env` file:
-
-```env
-SMS_API_KEY=your_api_key
-SMS_API_URL=https://api.smsprovider.com
-SMS_API_SENDER_ID=YourSenderID
-```
-
-Make sure to install `dotenv` to load the environment variables if you're using a `.env` file:
-
-```bash
-npm install dotenv
-```
-
-or you can use any other package that will handle `.env` file.
-
-Then, in your code:
-
-```typescript
-import dotenv from 'dotenv';
-dotenv.config();
-
-// Now you can use sendSms as usual
-sendSms({
-  recipientNumbers: ['8801*********'],
-  message: 'Hello from SMS Kit!'
-}).then(response => {
-  console.log('SMS Response:', response);
-}).catch(error => {
-  console.error('Error:', error);
-});
-```
-
-## Error Handling
-
-The `sendSms` function will return an object with the following structure:
-
-```typescript
-{
+interface ElnkResponse {
   success: boolean;
+  message?: string;
   data?: any;
   error?: string;
 }
 ```
 
-- `success`: `true` if the SMS was successfully sent, `false` otherwise.
-- `data`: The response data from the SMS provider if the request was successful.
-- `error`: A string describing the error message if the request failed.
+## How It Works
 
-### Example of error response:
-```typescript
-{
-  success: false,
-  error: "Failed to send SMS. Status: 500"
-}
-```
+1. Checks if a shortlink already exists for the provided `longUrl`.
+2. If it exists, returns the existing shortlink details.
+3. If it doesn't exist, creates a new shortlink.
+4. Fetches the full details of the created shortlink and returns them.
 
-## Configuration Options
+## Error Handling
 
-You can provide the following configuration options when calling `sendSms`:
-
-- `recipientNumbers`: A list of phone numbers (strings) to send the SMS to. The numbers should be in international format (e.g., `+8801712345678`).
-- `message`: The content of the message you want to send.
-- `apiKey`: (Optional) The API key for the SMS provider. If not provided, it will be fetched from the environment variable `SMS_API_KEY`.
-- `apiUrl`: (Optional) The API URL for the SMS provider. If not provided, it will be fetched from the environment variable `SMS_API_URL`.
-- `senderId`: (Optional) The sender ID to be used for sending the SMS. If not provided, it will be fetched from the environment variable `SMS_API_SENDER_ID`.
+If any step fails (e.g., invalid API key, network issues, etc.), the function returns an error object with `success: false` and an `error` message.
 
 ## License
 
-This package is open-source and available under the MIT License.
+This package is licensed under the MIT License.
