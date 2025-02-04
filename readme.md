@@ -1,6 +1,6 @@
-# elnk-pro-shortlink
+# elnk
 
-`elnk-pro-shortlink` is a simple, dependency-free TypeScript package for interacting with the [elnk.pro](https://elnk.pro/) API to check for existing shortlinks and create new ones if they do not exist.
+`elnk` is a simple, dependency-free TypeScript package for interacting with the [elnk.pro](https://elnk.pro/) API to check for existing shortlinks and create new ones if they do not exist.
 
 ## Installation
 
@@ -11,7 +11,7 @@ npm install elnk-pro-shortlink
 ## Usage
 
 ```typescript
-import { createLinkIfNotExist } from "elnk-pro-shortlink";
+import { createLinkIfNotExist } from "elnk";
 
 const apiKey = "your_api_key";
 const longUrl = "https://example.com";
