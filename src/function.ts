@@ -14,6 +14,7 @@ export async function createLinkIfNotExist({
   shortUrl = "",
   apiKey,
   domainId = 0,
+    projectId = 0,
 }: ElnkOptions): Promise<ElnkResponse> {
   try {
     if (!apiKey || !longUrl) {
@@ -54,6 +55,9 @@ export async function createLinkIfNotExist({
     if (shortUrl) {
         formData.append("url", shortUrl);
       }
+    if (projectId) {
+      formData.append("project_id", String(projectId));
+    }
 
     // Step 4: Create a new shortlink
     const createResponse = await fetch(url.toString(), {

@@ -4,6 +4,7 @@ export type ElnkOptions = {
   shortUrl?: string;
   senderId?: string;
   domainId?: number,
+    projectId?: number;
 
 }
 export type Variables ={
