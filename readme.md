@@ -1,4 +1,4 @@
-# Elnk.pro Link Shortener - NPM Package
+# Elnk - NPM Package
 
 A comprehensive Node.js library for creating and managing short URLs using the elnk.pro API. This package provides a complete, promise-based interface for interacting with the elnk.pro link shortening service.
 
@@ -28,13 +28,13 @@ A comprehensive Node.js library for creating and managing short URLs using the e
 ## 📦 Installation
 
 ```bash
-npm install elnk-pro-link-shortener
+npm install elnk
 ```
 
 ## 🚀 Quick Start
 
 ```javascript
-const ElnkProShortener = require('elnk-pro-link-shortener');
+const ElnkProShortener = require('elnk');
 
 // Initialize with your API key
 const shortener = new ElnkProShortener({
@@ -590,7 +590,7 @@ console.log(ElnkProShortener.formatBytes(1073741824)); // '1 GB'
 ### Complete Link Management Workflow
 
 ```javascript
-const ElnkProShortener = require('elnk-pro-link-shortener');
+const ElnkProShortener = require('elnk');
 
 async function linkManagementDemo() {
     const shortener = new ElnkProShortener({
@@ -861,7 +861,7 @@ console.log(isValid); // true
 ### Basic URL Shortening
 
 ```javascript
-const ElnkProShortener = require('elnk-pro-link-shortener');
+const ElnkProShortener = require('elnk');
 
 const shortener = new ElnkProShortener({
     apiKey: 'your-api-key'

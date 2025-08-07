@@ -1,5 +1,5 @@
 {
-  "name": "elnk-pro-link-shortener",
+  "name": "elnk",
   "version": "1.1.0",
   "description": "A comprehensive Node.js library for creating and managing short URLs using the elnk.pro API with enhanced features including link management, statistics, and bulk operations",
   "main": "index.js",
@@ -45,6 +45,7 @@
     "src/",
     "index.js",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ]
 }

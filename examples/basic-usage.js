@@ -4,7 +4,7 @@ const ElnkProShortener = require('../index');
 const API_KEY = 'your-elnk-pro-api-key';
 
 async function basicUsageExample() {
-    console.log('🔗 Elnk.pro Link Shortener - Basic Usage Example\n');
+    console.log('🔗 Elnk - Basic Usage Example\n');
     
     // Initialize the shortener
     const shortener = new ElnkProShortener({

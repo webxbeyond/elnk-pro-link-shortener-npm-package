@@ -1,0 +1,93 @@
+name: Update Documentation
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'package.json'
+  workflow_dispatch:
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Get package info
+      id: package
+      run: |
+        echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+        echo "name=$(node -p "require('./package.json').name")" >> $GITHUB_OUTPUT
+
+    - name: Update README badges
+      run: |
+        VERSION=${{ steps.package.outputs.version }}
+        PACKAGE_NAME=${{ steps.package.outputs.name }}
+        
+        # Update version badge in README
+        sed -i "s|https://img.shields.io/npm/v/.*\.svg|https://img.shields.io/npm/v/${PACKAGE_NAME}.svg|g" README.md || true
+        
+        # Add badges if they don't exist
+        if ! grep -q "shields.io" README.md; then
+          # Add badges after the main title
+          sed -i '2i\\n[![npm version](https://img.shields.io/npm/v/'${PACKAGE_NAME}'.svg)](https://www.npmjs.com/package/'${PACKAGE_NAME}')\n[![Downloads](https://img.shields.io/npm/dm/'${PACKAGE_NAME}'.svg)](https://www.npmjs.com/package/'${PACKAGE_NAME}')\n[![License](https://img.shields.io/npm/l/'${PACKAGE_NAME}'.svg)](https://github.com/webxbeyond/elnk-pro-link-shortener-npm-package/blob/master/LICENSE)\n[![Node.js Version](https://img.shields.io/node/v/'${PACKAGE_NAME}'.svg)](https://nodejs.org/)\n' README.md
+        fi
+
+    - name: Check for changes
+      id: changes
+      run: |
+        if git diff --quiet; then
+          echo "changed=false" >> $GITHUB_OUTPUT
+        else
+          echo "changed=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Commit documentation updates
+      if: steps.changes.outputs.changed == 'true'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add README.md
+        git commit -m "docs: update README badges for v${{ steps.package.outputs.version }}"
+        git push
+
+    - name: Generate API documentation
+      run: |
+        echo "# API Documentation" > API.md
+        echo "" >> API.md
+        echo "## ElnkProShortener Class" >> API.md
+        echo "" >> API.md
+        
+        # Extract JSDoc comments and method signatures from the main source file
+        if [ -f "src/ElnkProShortener.js" ]; then
+          echo "Extracting API documentation from source..."
+          # This is a simple example - you could use a proper JSDoc tool
+          grep -A 5 "^\s*\*\*" src/ElnkProShortener.js >> API.md || true
+        fi
+
+    - name: Update package stats
+      run: |
+        echo "# Package Statistics" > STATS.md
+        echo "" >> STATS.md
+        echo "Generated on: $(date)" >> STATS.md
+        echo "" >> STATS.md
+        echo "## Package Info" >> STATS.md
+        echo "- Name: ${{ steps.package.outputs.name }}" >> STATS.md
+        echo "- Version: ${{ steps.package.outputs.version }}" >> STATS.md
+        echo "- License: $(node -p "require('./package.json').license")" >> STATS.md
+        echo "" >> STATS.md
+        echo "## Dependencies" >> STATS.md
+        npm list --depth=0 >> STATS.md 2>/dev/null || true
+        echo "" >> STATS.md
+        echo "## Package Size" >> STATS.md
+        npm pack --dry-run 2>&1 | grep -E "(package size|unpacked size|total files)" >> STATS.md || true

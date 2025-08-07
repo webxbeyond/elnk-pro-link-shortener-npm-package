@@ -1,0 +1,173 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version type'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+      pre-release:
+        description: 'Create pre-release'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        registry-url: 'https://registry.npmjs.org/'
+        cache: 'npm'
+
+    - name: Configure Git
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run tests
+      run: npm test
+
+    - name: Run linting
+      run: npm run lint
+
+    - name: Run build
+      run: npm run build
+
+    - name: Get current version
+      id: current-version
+      run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+
+    - name: Bump version
+      id: bump-version
+      run: |
+        npm version ${{ github.event.inputs.version }} --no-git-tag-version
+        NEW_VERSION=$(node -p "require('./package.json').version")
+        echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+    - name: Update CHANGELOG
+      run: |
+        TODAY=$(date +%Y-%m-%d)
+        NEW_VERSION=${{ steps.bump-version.outputs.version }}
+        
+        # Create new changelog entry
+        cat > temp_changelog.md << EOF
+        # Changelog
+        
+        ## [$NEW_VERSION] - $TODAY
+        
+        ### Added
+        - Release v$NEW_VERSION
+        
+        ### Changed
+        - Version bump from ${{ steps.current-version.outputs.version }} to $NEW_VERSION
+        
+        EOF
+        
+        # Append existing changelog (skip the first line if it's just "# Changelog")
+        if [ -f CHANGELOG.md ]; then
+          tail -n +2 CHANGELOG.md >> temp_changelog.md
+        fi
+        
+        mv temp_changelog.md CHANGELOG.md
+
+    - name: Commit changes
+      run: |
+        git add package.json CHANGELOG.md
+        git commit -m "chore: bump version to ${{ steps.bump-version.outputs.version }}"
+        git tag -a "v${{ steps.bump-version.outputs.version }}" -m "Release v${{ steps.bump-version.outputs.version }}"
+
+    - name: Push changes
+      run: |
+        git push origin master
+        git push origin "v${{ steps.bump-version.outputs.version }}"
+
+    - name: Check if version exists on npm
+      id: check-npm
+      run: |
+        if npm view elnk@${{ steps.bump-version.outputs.version }} version 2>/dev/null; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+      continue-on-error: true
+
+    - name: Publish to npm
+      if: steps.check-npm.outputs.exists == 'false'
+      run: npm publish --access public
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+    - name: Generate release notes
+      id: release-notes
+      run: |
+        echo "Generating release notes..."
+        
+        cat > release_notes.md << EOF
+        ## 🎉 Release v${{ steps.bump-version.outputs.version }}
+        
+        ### 📦 Installation
+        \`\`\`bash
+        npm install elnk@${{ steps.bump-version.outputs.version }}
+        \`\`\`
+        
+        ### 🔧 Usage
+        \`\`\`javascript
+        const ElnkProShortener = require('elnk');
+        
+        const shortener = new ElnkProShortener({
+            apiKey: 'your-api-key'
+        });
+        \`\`\`
+        
+        ### 📋 Changes
+        See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/master/CHANGELOG.md) for detailed changes.
+        
+        ### 🚀 Features
+        - ✅ CommonJS and ES Module support
+        - ✅ Full TypeScript support
+        - ✅ Framework compatibility (Next.js, Vite, NestJS, etc.)
+        - ✅ Comprehensive error handling
+        - ✅ Static utility methods
+        
+        ### 🔗 Links
+        - 📦 [npm package](https://www.npmjs.com/package/elnk)
+        - 📚 [Documentation](https://github.com/${{ github.repository }})
+        - 🐛 [Issues](https://github.com/${{ github.repository }}/issues)
+        EOF
+
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.bump-version.outputs.version }}
+        release_name: Release v${{ steps.bump-version.outputs.version }}
+        body_path: release_notes.md
+        draft: false
+        prerelease: ${{ github.event.inputs.pre-release }}
+
+    - name: Success notification
+      run: |
+        echo "🎉 Successfully released v${{ steps.bump-version.outputs.version }}"
+        echo "📦 NPM: https://www.npmjs.com/package/elnk"
+        echo "🏷️ GitHub: https://github.com/${{ github.repository }}/releases/tag/v${{ steps.bump-version.outputs.version }}"

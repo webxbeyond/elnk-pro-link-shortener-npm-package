@@ -1,4 +1,4 @@
-# Elnk.pro Link Shortener NPM Package - Project Structure
+# Elnk NPM Package - Project Structure
 
 This document provides an overview of the project structure and explains the purpose of each file and directory.
 
@@ -43,7 +43,7 @@ elnk-pro-link-shortener-npm-package/
 #### `index.js`
 - Main entry point for the NPM package
 - Simple re-export of the main ElnkProShortener class
-- Allows users to `require('elnk-pro-link-shortener')`
+- Allows users to `require('elnk')`
 
 #### `src/ElnkProShortener.js`
 - Main library class containing all functionality

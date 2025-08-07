@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Setup script for elnk.pro Link Shortener NPM package
+ * Setup script for elnk NPM package
  * This script helps initialize the package and verify installation
  */
 
@@ -9,7 +9,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-console.log('🔗 Elnk.pro Link Shortener NPM Package Setup\n');
+console.log('🔗 Elnk NPM Package Setup\n');
 
 // Check if we're in the right directory
 const packageJsonPath = path.join(__dirname, 'package.json');
