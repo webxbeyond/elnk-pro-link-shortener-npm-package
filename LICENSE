@@ -1,0 +1,42 @@
+GNU GENERAL PUBLIC LICENSE
+Version 2, June 1991
+
+Copyright (C) 2024 elnk.pro Link Shortener NPM Package Contributors
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+
+The complete GPL v2 license text is available at:
+https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+
+ADDITIONAL TERMS:
+
+This Node.js package is designed to work with the elnk.pro URL shortening service.
+Use of this package requires an account with elnk.pro, which has its own terms of service.
+
+THIRD-PARTY SERVICES:
+
+This package interacts with the elnk.pro API service (https://elnk.pro).
+By using this package, you acknowledge that:
+- Data may be transmitted to elnk.pro servers
+- elnk.pro's privacy policy and terms of service apply to that data
+- The package maintainers are not responsible for elnk.pro's service availability
+
+CONTRIBUTIONS:
+
+By contributing to this project, you agree that your contributions will be licensed
+under the same GPL v2 license. See the repository for contribution guidelines.
+
+For more information about this package, visit:
+https://github.com/webxbeyond/elnk-pro-link-shortener-npm-package
