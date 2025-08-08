@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security Report
+    url: https://github.com/webxbeyond/elnk-pro-link-shortener-npm-package/security/advisories/new
+    about: Please report security vulnerabilities here.

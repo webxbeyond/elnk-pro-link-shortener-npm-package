@@ -1,5 +1,14 @@
 # Elnk - NPM Package
 
+[![CI](https://github.com/webxbeyond/elnk-pro-link-shortener-npm-package/actions/workflows/ci.yml/badge.svg)](https://github.com/webxbeyond/elnk-pro-link-shortener-npm-package/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/elnk.svg)](https://www.npmjs.com/package/elnk)
+[![license: GPL v2 or later](https://img.shields.io/badge/License-GPL_v2%2B-blue.svg)](LICENSE)
+[![code style: eslint](https://img.shields.io/badge/code%20style-eslint-4B32C3.svg)](.eslintrc.json)
+
+• Contributing guidelines: see CONTRIBUTING.md
+• Code of Conduct: see CODE_OF_CONDUCT.md
+• Security policy: see SECURITY.md
+
 A comprehensive Node.js library for creating and managing short URLs using the elnk.pro API. This package provides a complete, promise-based interface for interacting with the elnk.pro link shortening service.
 
 ## 🚀 Features
